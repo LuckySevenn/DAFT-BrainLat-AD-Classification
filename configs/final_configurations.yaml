@@ -1,0 +1,36 @@
+# Final configurations of each model (Table 4.6 of the degree document).
+# Selected as the highest validation balanced accuracy among the runs whose
+# validation-test balanced-accuracy gap was below 10 percentage points.
+# The code that trains each model is in scripts/05_training/run_grid.py (DAFT, ResNet)
+# and in notebooks/ (FT-Transformer, Random Forest, XGBoost).
+
+daft:                       # MRI + tabular, scripts/05_training/run_grid.py
+  fixed: {epochs: 30, n_basefilters: 4, bottleneck_factor: 7, normalize_image: minmax, normalize_tabular: true}
+  AdamW: {batch_size: 16, learning_rate: 0.013,  weight_decay: 0.01}
+  Adam:  {batch_size: 8,  learning_rate: 0.001,  weight_decay: 0.01}
+  SGD:   {batch_size: 32, learning_rate: 0.0023, weight_decay: 0, momentum: 0.9}
+
+resnet_3d:                  # image only, scripts/05_training/run_grid.py
+  fixed: {epochs: 30, n_basefilters: 4, normalize_image: minmax}
+  AdamW: {batch_size: 16, learning_rate: 0.013,  weight_decay: 0.01}
+  Adam:  {batch_size: 8,  learning_rate: 0.0055, weight_decay: 0.01}
+  SGD:   {batch_size: 16, learning_rate: 0.0023, weight_decay: 0.0001, momentum: 0.9}
+
+ft_transformer:             # tabular only, notebooks/ftt_optimizadores_colab.ipynb
+  fixed: {epochs: 30, n_blocks: 3, d_token: 192, attention_n_heads: 8, attention_dropout: 0.2,
+          ffn_dropout: 0.1, residual_dropout: 0.0}
+  AdamW: {batch_size: 32, learning_rate: 0.00003, weight_decay: 0}
+  Adam:  {batch_size: 32, learning_rate: 0.00003, weight_decay: 0.01}
+  SGD:   {batch_size: 8,  learning_rate: 0.001,   weight_decay: 0.0001, momentum: 0.9}
+
+random_forest:              # notebooks/rf_xgboost_colab.ipynb
+  n_estimators: 500
+  max_features: sqrt
+  max_depth: 3
+  min_samples_leaf: 1
+
+xgboost:                    # notebooks/rf_xgboost_colab.ipynb
+  n_estimators: 300
+  max_depth: 3
+  learning_rate: 0.01
+  reg_lambda: 10
