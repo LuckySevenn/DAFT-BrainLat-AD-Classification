@@ -1,0 +1,25 @@
+# Medical data: never commit images or patient data
+*.nii
+*.nii.gz
+*.mgz
+*.h5
+*.hdf5
+data/**/*
+!data/**/
+!data/**/.gitkeep
+
+# Model checkpoints and experiment outputs
+*.pth
+*.pt
+*.ckpt
+runs/
+experiments/
+lightning_logs/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
