@@ -1,6 +1,6 @@
 """
-capturasMRI.py
-==============
+mri_snapshots.py
+================
 
 Genera capturas PNG de cada imagen T1 (NIfTI) de una carpeta para revisarlas
 visualmente (orientación, cobertura del cerebro, artefactos) antes de
@@ -25,7 +25,7 @@ Requisitos
 
 Uso
 ---
-  python capturasMRI.py /ruta/a/carpeta_nifti
+  python mri_snapshots.py /ruta/a/carpeta_nifti
   (sin argumento usa INPUT_DIR de la sección CONFIGURACIÓN)
 
 Parámetros que se pueden cambiar (sección CONFIGURACIÓN)
