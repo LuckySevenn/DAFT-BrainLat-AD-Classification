@@ -1,3 +1,3 @@
 # Final configurations
 
-One file per model with the selected hyperparameters (e.g. `daft.yaml`, `resnet.yaml`, `ft_transformer.yaml`, `random_forest.yaml`, `xgboost.yaml`).
+`final_configurations.yaml` has the selected hyperparameters of every model (Table 4.6 of the degree document): DAFT, 3D ResNet and FT-Transformer (one configuration per optimizer), Random Forest and XGBoost.
