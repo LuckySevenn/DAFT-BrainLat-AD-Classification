@@ -3,7 +3,7 @@ PreProcessing.py
 ================
 
 Procesa imágenes T1 (NIfTI) con FreeSurfer y deja, para cada sujeto, la carpeta
-que usan build_master_csv.py y generate_hdf5.py:
+que usan build_master_csv.py y build_hdf5.py:
 
   <PATH_DESTINATION>/<sujeto>/mri/    norm.mgz, aseg.mgz, ...
   <PATH_DESTINATION>/<sujeto>/stats/  aseg.stats, lh/rh.aparc.stats,
