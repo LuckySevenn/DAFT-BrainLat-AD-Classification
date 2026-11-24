@@ -76,7 +76,7 @@ OPTIMIZERS = ["AdamW", "Adam", "SGD"]
 ARCHITECTURES = ["daft", "resnet"]       # daft: imagen + tabular | resnet: solo imagen
 LEARNING_RATES = [0.03, 0.013, 0.0055, 0.0023, 0.001]   # grilla del paper de DAFT
 DECAY_RATES = [0.0, 1e-4, 1e-2]
-BATCH_SIZES = [8, 16, 32]   # el paper usa 256, inviable con ~257 sujetos de entrenamiento
+BATCH_SIZES = [8, 16, 32]   # el paper usa 256, inviable con 240 sujetos de entrenamiento
 
 FIXED = {
     "task": "clf",
@@ -161,6 +161,7 @@ def class_counts(path):
                 continue
             dx = f[k].attrs.get("DX")
             dx = dx.decode() if isinstance(dx, bytes) else dx
+            dx = {"Dementia": "AD"}.get(dx, dx)   # DAFT codifica AD como "Dementia"
             if dx in counts:
                 counts[dx] += 1
     if min(counts.values()) == 0:
