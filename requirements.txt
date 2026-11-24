@@ -1,8 +1,11 @@
 numpy
 pandas
+scipy
 scikit-learn
 xgboost
 h5py
 nibabel
 matplotlib
 openpyxl
+tensorboard
+torch          # for GPU, install the build that matches your CUDA: https://pytorch.org/get-started/locally/
