@@ -28,21 +28,27 @@ The pipeline performs:
 ├── README.md
 ├── requirements.txt
 ├── scripts/
-│   ├── 01_quality_control/   # Sagittal, coronal and axial views of each scan
-│   ├── 02_freesurfer/        # FreeSurfer batch script
-│   ├── 03_tabular_features/  # Stats extraction, eTIV adjustment, master CSV and split
-│   ├── 04_hdf5/              # Hippocampus patch extraction and HDF5 conversion
-│   ├── 05_training/          # Grid search over DAFT's train.py (DAFT and ResNet)
-│   └── 06_evaluation_adni/   # Evaluation of the final models on ADNI
+│   ├── 01_quality_control/
+│   │   └── mri_snapshots.py           # Sagittal, coronal and axial views of each scan
+│   ├── 02_freesurfer/
+│   │   └── PreProcessing.py           # FreeSurfer batch (BrainLat and ADNI)
+│   ├── 03_tabular_features/
+│   │   ├── build_master_csv.py        # BrainLat master CSV with the train/valid/test split
+│   │   └── build_master_csv_adni.py   # ADNI master CSV (all subjects in test)
+│   ├── 04_hdf5/
+│   │   ├── build_hdf5.py              # BrainLat train.h5, valid.h5, test.h5
+│   │   └── build_hdf5_adni.py         # ADNI test.h5 (normalized with BrainLat train statistics)
+│   ├── 05_training/
+│   │   ├── run_grid.py                # Grid search for DAFT and the 3D ResNet
+│   │   └── daft_plots.py              # Learning curves, confusion matrices, ROC and metrics
+│   └── 06_evaluation_adni/
+│       └── evaluate_adni.py           # Evaluation of the final DAFT and ResNet models on ADNI
 ├── notebooks/
-│   ├── rf_xgboost_colab.ipynb
-│   └── ftt_optimizadores_colab.ipynb
-├── configs/                  # Final hyperparameters of each model
-├── data/
-│   ├── brainlat/             # BrainLat master CSV (not included)
-│   ├── adni/                 # ADNI master CSV (not included)
-│   └── hdf5/                 # Generated HDF5 files (not included)
-└── results/                  # Link to the full training results
+│   ├── ftt_optimizadores_colab.ipynb  # FT-Transformer
+│   ├── rf_xgboost_colab.ipynb         # Random Forest and XGBoost
+│   └── descriptivos_brainlat_adni.ipynb  # BrainLat vs ADNI cohort comparison (boxplots, demographic table)
+└── configs/
+    └── final_configurations.yaml      # Final hyperparameters of each model
 ```
 
 ## Data
@@ -62,27 +68,29 @@ The MRI images and clinical data are **not included** in this repository. BrainL
 
 ## Instructions
 
-1. Clone this repository and the original DAFT repository.
+Each script has a CONFIGURATION section at the top with the paths to set before running it.
+
+1. Clone this repository and the original DAFT repository, and install the dependencies (`pip install -r requirements.txt`). FreeSurfer 7.4.1 with the hippocampal subfields module is needed for step 3.
 
         git clone <this-repository>
         git clone https://github.com/ai-med/DAFT.git
 
-2. Install the dependencies (`pip install -r requirements.txt`) and PyTorch following the [official instructions](https://pytorch.org/get-started/locally/). FreeSurfer 7.4.1 is needed for step 4.
-3. Place the T1-weighted scans in the input folder and run the quality control script in `scripts/01_quality_control/`.
-4. Run the FreeSurfer batch script in `scripts/02_freesurfer/`. The same script is used for BrainLat and ADNI; only the input path changes.
-5. Build the master CSV with the scripts in `scripts/03_tabular_features/`. It is saved in `data/brainlat/` (or `data/adni/`).
-6. Build the HDF5 files with the script in `scripts/04_hdf5/`. They are saved in `data/hdf5/`.
-7. Run the grid search for DAFT and the 3D ResNet with the script in `scripts/05_training/`.
-8. Open the notebooks in `notebooks/` in Google Colab to train FT-Transformer, Random Forest and XGBoost on the same master CSV.
-9. Evaluate the final models on ADNI with the scripts in `scripts/06_evaluation_adni/`.
+2. **Quality control.** Run `scripts/01_quality_control/mri_snapshots.py` on the folder with the T1-weighted scans and review the images.
+3. **FreeSurfer.** Run `scripts/02_freesurfer/PreProcessing.py`: `INPUT_MODE = "csv"` for BrainLat (once per country) and `INPUT_MODE = "folder"` for ADNI.
+4. **Master CSV.** Run `scripts/03_tabular_features/build_master_csv.py` (BrainLat) and `build_master_csv_adni.py` (ADNI).
+5. **HDF5.** Run `scripts/04_hdf5/build_hdf5.py` (BrainLat) and then `build_hdf5_adni.py` (ADNI, which needs the BrainLat `train.h5`).
+6. **DAFT and 3D ResNet.** Copy `run_grid.py` and `daft_plots.py` from `scripts/05_training/` to the root of the DAFT repository (next to `train.py`) and run `python run_grid.py` from there.
+7. **FT-Transformer, Random Forest and XGBoost.** Open the notebooks in `notebooks/` in Google Colab and upload the BrainLat (and ADNI) master CSV when asked.
+8. **ADNI evaluation.** Copy `scripts/06_evaluation_adni/evaluate_adni.py` to the root of the DAFT repository (next to `run_grid.py` and `daft_plots.py`) and run `python evaluate_adni.py`.
+9. **Cohort comparison.** Open `notebooks/descriptivos_brainlat_adni.ipynb` in Google Colab to reproduce the boxplots and the demographic table.
 
 ## Notes
 
 - The original DAFT code is used without changes; the scripts in this repository only call it.
 - For DAFT, the ResNet and the FT-Transformer, each run keeps the checkpoint with the highest validation balanced accuracy.
-- The final configuration of each model is the one with the highest validation balanced accuracy among those whose validation–test balanced-accuracy gap is less than 10 percentage points. Because the BrainLat test set was used in this selection, its results should be read as optimistic.
-- The ADNI tabular variables are standardized with the mean and standard deviation of the BrainLat training set.
-- The full training results are in `Datos_entrenamiento.xlsx` (see `results/`).
+- The final configuration of each model (`configs/final_configurations.yaml`) is the one with the highest validation balanced accuracy among those whose validation–test balanced-accuracy gap is less than 10 percentage points. Because the BrainLat test set was used in this selection, its results should be read as optimistic.
+- The ADNI tabular variables and images are normalized with the statistics of the BrainLat training set.
+- DAFT encodes the AD class as `"Dementia"`, so the master CSVs and HDF5 files use that label.
 
 ## References
 
