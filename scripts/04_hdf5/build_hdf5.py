@@ -1,6 +1,6 @@
 """
-generate_hdf5.py
-================
+build_hdf5.py
+=============
 
 Genera los archivos train.h5, valid.h5 y test.h5 que recibe DAFT, a partir de
 master.csv (salida de build_master_csv.py) y de las imágenes procesadas con
@@ -38,7 +38,7 @@ Cómo replicar
 -------------
   1. Ejecutar antes build_master_csv.py.
   2. Ajustar las rutas de la sección CONFIGURACIÓN.
-  3. Ejecutar:  python generate_hdf5.py
+  3. Ejecutar:  python build_hdf5.py
   4. Usar los .h5 generados con DAFT (p. ej. --num_classes 2 para CN vs AD).
 
 Parámetros que se pueden cambiar (sección CONFIGURACIÓN)
