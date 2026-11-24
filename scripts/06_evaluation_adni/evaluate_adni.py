@@ -16,8 +16,8 @@ PROPÓSITO
 
 REQUISITOS
     - Haber corrido run_grid.py: deben existir las carpetas de los experimentos.
-    - train.h5 y valid.h5 de BrainLat y test.h5 de ADNI generados con build_hdf5.py,
-      con las mismas variables tabulares y en el mismo orden.
+    - train.h5 y valid.h5 de BrainLat generados con build_hdf5.py y test.h5 de ADNI
+      generado con build_hdf5_adni.py, con las mismas variables tabulares y en el mismo orden.
     - Este archivo y daft_plots.py en la raíz del repositorio DAFT.
 
 USO
@@ -177,6 +177,7 @@ def class_counts(path, default):
                     continue
                 dx = f[k].attrs.get("DX")
                 dx = dx.decode() if isinstance(dx, bytes) else dx
+                dx = {"Dementia": "AD"}.get(dx, dx)   # DAFT codifica AD como "Dementia"
                 if dx in counts:
                     counts[dx] += 1
     except Exception:
